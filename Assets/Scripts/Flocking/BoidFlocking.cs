@@ -5,12 +5,15 @@ using UnityEngine;
 
 public class BoidFlocking : MonoBehaviour
 {
-    private GameObject Controller;
+    private BoidController boidController;
+
+
     private bool inited = false;
-    private float minVelocity;
-    private float maxVelocity;
-    private float randomness;
-    private GameObject chasee;
+    private float minVelocity { get { return boidController.minVelocity;   } }
+    private float maxVelocity { get { return boidController.maxVelocity;   } }
+    private float randomness  { get { return boidController.randomness;    } }
+    Vector3 flockCenter       { get { return boidController.flockCenter;   } }
+    Vector3 flockVelocity     { get { return boidController.flockVelocity; } }
 
     void Start()
     {
@@ -41,32 +44,30 @@ public class BoidFlocking : MonoBehaviour
             yield return new WaitForSeconds(waitTime);
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.GetComponent<BoidFlocking>() != null)
+        {
+            GetComponent<Rigidbody>().velocity = -GetComponent<Rigidbody>().velocity;
+        }
+
+    }
 
     private Vector3 Calc()
     {
         Vector3 randomize = new Vector3((Random.value * 2) - 1, (Random.value * 2) - 1, (Random.value * 2) - 1);
 
         randomize.Normalize();
-        BoidController boidController = Controller.GetComponent<BoidController>();
-        Vector3 flockCenter = boidController.flockCenter;
-        Vector3 flockVelocity = boidController.flockVelocity;
-        Vector3 follow = chasee.transform.localPosition;
 
-        flockCenter = flockCenter - transform.localPosition;
-        flockVelocity = flockVelocity - GetComponent<Rigidbody>().velocity;
-        follow = follow - transform.localPosition;
+        Vector3 relFlockCenter = flockCenter - transform.localPosition;
+        Vector3 relFlockVelocity = flockVelocity - GetComponent<Rigidbody>().velocity;
 
-        return (flockCenter + flockVelocity + follow * 2 + randomize * randomness);
+        return (relFlockCenter + relFlockVelocity + randomize * randomness);
     }
 
-    public void SetController(GameObject theController)
+    public void SetController(BoidController theBoidController)
     {
-        Controller = theController;
-        BoidController boidController = Controller.GetComponent<BoidController>();
-        minVelocity = boidController.minVelocity;
-        maxVelocity = boidController.maxVelocity;
-        randomness = boidController.randomness;
-        chasee = boidController.chasee;
+        boidController = theBoidController;
         inited = true;
     }
 }

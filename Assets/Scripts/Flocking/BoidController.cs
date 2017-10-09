@@ -4,21 +4,25 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
+    // Public variables
     public float minVelocity = 5;
     public float maxVelocity = 20;
     public float randomness = 1;
     public int flockSize = 20;
-    public GameObject prefab;
-    public GameObject chasee;
-
     public Vector3 flockCenter;
     public Vector3 flockVelocity;
 
-    private GameObject[] boids;
 
-    void Start()
+    //
+    public GameObject prefab;
+    public GameObject chasee;
+
+
+    private List<GameObject> boids;
+
+    void Awake()
     {
-        boids = new GameObject[flockSize];
+        boids = new List<GameObject>();
         for (var i = 0; i < flockSize; i++)
         {
             Vector3 position = new Vector3(
@@ -30,12 +34,19 @@ public class BoidController : MonoBehaviour
             GameObject boid = Instantiate(prefab, transform.position, transform.rotation) as GameObject;
             boid.transform.parent = transform;
             boid.transform.localPosition = position;
-            boid.GetComponent<BoidFlocking>().SetController(gameObject);
-            boids[i] = boid;
+            boid.GetComponent<BoidFlocking>().SetController(this);
+            boids.Add(boid);
         }
+
+        UpdateAggregateMovement();
     }
 
     void Update()
+    {
+        UpdateAggregateMovement();
+    }
+
+    void UpdateAggregateMovement()
     {
         Vector3 theCenter = Vector3.zero;
         Vector3 theVelocity = Vector3.zero;
@@ -48,5 +59,6 @@ public class BoidController : MonoBehaviour
 
         flockCenter = theCenter / (flockSize);
         flockVelocity = theVelocity / (flockSize);
+
     }
 }
