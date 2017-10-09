@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swarm.Plugins", "Swarm.Plugins.csproj", "{5AB7BBF3-98ED-4F59-70E7-B9F6ED826EFB}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swarm", "Swarm.csproj", "{EF5370A4-4526-4049-26B8-5E5803FBDCB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swarm.Editor", "Swarm.Editor.csproj", "{F75F1378-E027-0FE6-18E6-93E809B1A6D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swarm.Editor.Plugins", "Swarm.Editor.Plugins.csproj", "{1B90EDE7-2A36-BA78-8043-07984BC32565}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +13,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AB7BBF3-98ED-4F59-70E7-B9F6ED826EFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AB7BBF3-98ED-4F59-70E7-B9F6ED826EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AB7BBF3-98ED-4F59-70E7-B9F6ED826EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AB7BBF3-98ED-4F59-70E7-B9F6ED826EFB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF5370A4-4526-4049-26B8-5E5803FBDCB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF5370A4-4526-4049-26B8-5E5803FBDCB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF5370A4-4526-4049-26B8-5E5803FBDCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF5370A4-4526-4049-26B8-5E5803FBDCB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F75F1378-E027-0FE6-18E6-93E809B1A6D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F75F1378-E027-0FE6-18E6-93E809B1A6D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F75F1378-E027-0FE6-18E6-93E809B1A6D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F75F1378-E027-0FE6-18E6-93E809B1A6D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B90EDE7-2A36-BA78-8043-07984BC32565}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B90EDE7-2A36-BA78-8043-07984BC32565}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B90EDE7-2A36-BA78-8043-07984BC32565}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B90EDE7-2A36-BA78-8043-07984BC32565}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
