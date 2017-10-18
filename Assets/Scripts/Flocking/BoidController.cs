@@ -4,20 +4,31 @@ using UnityEngine;
 
 public class BoidController : MonoBehaviour
 {
-    // Public variables
+    // Public properties
+    public GameObject boidPrefab;
+    public int flockSize = 20;
+
+    [Header("Swarm Parameteres")]
     public float minVelocity = 5;
     public float maxVelocity = 20;
-    public float randomness = 1;
-    public int flockSize = 20;
+
+    public float randomness  = 1;
+    public float cohesion    = 1;
+    public float alignment   = 1;
+    public float attraction  = 1;
+    public float repulsion   = 1;
+    public float range = 10;
+
+    [Header("Swarm attractors/repulsors")]
+    public GameObject[] attractors;
+    public GameObject[] repulsors;
+
+    [HideInInspector]
     public Vector3 flockCenter;
+    [HideInInspector]
     public Vector3 flockVelocity;
 
-
-    //
-    public GameObject prefab;
-    public GameObject chasee;
-
-
+    // Private properties
     private List<GameObject> boids;
 
     void Awake()
@@ -31,14 +42,22 @@ public class BoidController : MonoBehaviour
                 Random.value * GetComponent<Collider>().bounds.size.z
             ) - GetComponent<Collider>().bounds.extents;
 
-            GameObject boid = Instantiate(prefab, transform.position, transform.rotation) as GameObject;
+            GameObject boid = Instantiate(boidPrefab, transform.position, transform.rotation) as GameObject;
             boid.transform.parent = transform;
             boid.transform.localPosition = position;
             boid.GetComponent<BoidFlocking>().SetController(this);
             boids.Add(boid);
         }
+        GetComponent<Collider>().enabled = false;
 
         UpdateAggregateMovement();
+    }
+    private void Start()
+    {
+        foreach (GameObject boid in boids)
+        {
+            boid.GetComponent<BoidFlocking>().startMovment();
+        }
     }
 
     void Update()
@@ -48,17 +67,16 @@ public class BoidController : MonoBehaviour
 
     void UpdateAggregateMovement()
     {
-        Vector3 theCenter = Vector3.zero;
+        Vector3 theCenter   = Vector3.zero;
         Vector3 theVelocity = Vector3.zero;
 
         foreach (GameObject boid in boids)
         {
-            theCenter = theCenter + boid.transform.localPosition;
+            theCenter = theCenter + boid.transform.position;
             theVelocity = theVelocity + boid.GetComponent<Rigidbody>().velocity;
         }
 
         flockCenter = theCenter / (flockSize);
         flockVelocity = theVelocity / (flockSize);
-
     }
 }

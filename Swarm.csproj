@@ -84,8 +84,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Flocking\BoidBehaviour.cs" />
     <Compile Include="Assets\Scripts\Flocking\BoidController.cs" />
     <Compile Include="Assets\Scripts\Flocking\BoidFlocking.cs" />
+    <Compile Include="Assets\Scripts\targetMovement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
