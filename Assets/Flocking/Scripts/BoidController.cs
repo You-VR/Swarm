@@ -18,10 +18,17 @@ public class BoidController : MonoBehaviour
     public float attraction  = 1;
     public float repulsion   = 1;
     public float range = 10;
+    public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
 
     [Header("Swarm attractors/repulsors")]
-    public GameObject[] attractors;
-    public GameObject[] repulsors;
+    public GameObject[] _attractors;
+    public GameObject[] _repulsors;
+
+    [HideInInspector]
+    public Dictionary<string, GameObject> attractors;
+    [HideInInspector]
+    public Dictionary<string, GameObject> repulsors;
+
 
     [HideInInspector]
     public Vector3 flockCenter;
@@ -49,6 +56,21 @@ public class BoidController : MonoBehaviour
             boids.Add(boid);
         }
         GetComponent<Collider>().enabled = false;
+
+        attractors = new Dictionary<string, GameObject>();
+        int count = 0;
+        foreach( GameObject gameObject in _attractors)
+        {
+            if (gameObject != null) { attractors.Add("Default_" + count.ToString(), gameObject); }
+            count++;
+        }
+        repulsors = new Dictionary<string, GameObject>();
+        count = 0;
+        foreach (GameObject gameObject in _repulsors)
+        {
+            if (gameObject != null) { repulsors.Add("Default_" + count.ToString(), gameObject); }
+            count++;
+        }
 
         UpdateAggregateMovement();
     }

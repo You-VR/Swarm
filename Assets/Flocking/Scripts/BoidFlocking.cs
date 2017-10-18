@@ -5,36 +5,53 @@ using UnityEngine;
 
 public class BoidFlocking : MonoBehaviour
 {
-    enum BoidBehaviour {
+    enum BoidBehaviour
+    {
         NORMAL,
-        SCARED,
+        EXCITED,
         FREE
     };
 
-
-    private BoidController boidController;
-
+    // Global parameters
     private float minVelocity { get { return boidController.minVelocity;   } }
     private float maxVelocity { get { return boidController.maxVelocity;   } }
     private float randomness  { get { return boidController.randomness;    } }
-    private float cohesion    { get { return boidController.cohesion;      } }
+    private float cohesion    {
+        get {
+            return boidController.cohesion + (boidController.cohesion * Mathf.Sin(Time.time) / 2);
+        }
+    }
     private float alignment   { get { return boidController.alignment;     } }
     private float attraction  { get { return boidController.attraction; } }
     private float repulsion   { get { return boidController.repulsion;  } }
     private float range       { get { return boidController.range; } }
+    private Vector3 maxRandomRotation { get { return boidController.maxRandomRotation; } }
 
-    private GameObject[] global_attractors { get { return boidController.attractors; } }
-    private GameObject[] global_repulsors  { get { return boidController.repulsors;  } }
-    private GameObject[] local_attractors { get { return boidController.attractors; } }
-    private GameObject[] local_repulsors  { get { return boidController.repulsors; } }
+    private GameObject[] global_attractors {
+        get {
+            GameObject[] array = new GameObject[boidController.attractors.Values.Count];
+            boidController.attractors.Values.CopyTo(array, 0);
+            return array;
+        }
+    }
+
+    private GameObject[] global_repulsors  {
+        get {
+            GameObject[] array = new GameObject[boidController.repulsors.Values.Count];
+            boidController.repulsors.Values.CopyTo(array, 0);
+            return array;
+        }
+    }
 
     private Vector3 flockCenter       { get { return boidController.flockCenter;   } }
     private Vector3 flockVelocity     { get { return boidController.flockVelocity; } }
 
+    // Local properties
+    private BoidController boidController;
     private BoidBehaviour boidBehaviour;
 
-    Vector3 maxRandomRotation = new Vector3( 30.0f, 40.0f, 10.0f);
-
+    private GameObject[] local_attractors;
+    private GameObject[] local_repulsors;
 
     public void startMovment()
     {
@@ -68,10 +85,7 @@ public class BoidFlocking : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Vector3 bounce = (transform.position - collision.gameObject.transform.position);
-        //if (collision.gameObject.GetComponent<BoidFlocking>() != null)
-        //{
-            GetComponent<Rigidbody>().velocity = bounce * Time.deltaTime;
-        //}
+        GetComponent<Rigidbody>().velocity = 2 * bounce * Time.deltaTime;
     }
 
     private Vector3 randomPerturbations( Vector3 target)
@@ -111,12 +125,7 @@ public class BoidFlocking : MonoBehaviour
         Vector3 repulsionVector = Vector3.zero;
         foreach (GameObject repuslor in global_repulsors)
         {
-            repulsionVector += dropOff(transform.position - repuslor.transform.position, range);
-        }
-        foreach (GameObject repulsor
-            in local_repulsors)
-        {
-            repulsionVector += dropOff(transform.position - repulsor.transform.position, range);
+            if (repuslor != null) { repulsionVector += dropOff(transform.position - repuslor.transform.position, range); }
         }
         return repulsionVector;
     }
@@ -124,13 +133,9 @@ public class BoidFlocking : MonoBehaviour
     private Vector3 getAttractionVector()
     {
         Vector3 attractionVector = Vector3.zero;
-        foreach (GameObject attractor in local_attractors)
+        foreach (GameObject attractor in global_attractors)
         {
-            attractionVector += dropOff(attractor.transform.position - transform.position, range);
-        }
-        foreach (GameObject attractor in local_attractors)
-        {
-            attractionVector += dropOff(attractor.transform.position - transform.position, range);
+            if (attractor != null) { attractionVector += dropOff(attractor.transform.position - transform.position, range); }
         }
         return attractionVector;
     }
@@ -145,12 +150,7 @@ public class BoidFlocking : MonoBehaviour
     {
         float sign = Mathf.Sign(x);
         x = Mathf.Abs(x);
-
-        if( x != 0)
-        {
-            x = range / x;
-        }
-
+        if ( x != 0) { x = range / x; }
         return x * sign;
     }
     private Vector3 dropOff(Vector3 x, float range)
@@ -158,7 +158,6 @@ public class BoidFlocking : MonoBehaviour
         return new Vector3(   dropOff(x.x, range),
                               dropOff(x.y, range),
                               dropOff(x.z, range));
-
     }
 
     private float tickFunction(float x, float p1)
