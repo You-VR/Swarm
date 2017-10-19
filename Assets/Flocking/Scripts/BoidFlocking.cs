@@ -24,7 +24,8 @@ public class BoidFlocking : MonoBehaviour
     private float alignment   { get { return boidController.alignment;     } }
     private float attraction  { get { return boidController.attraction; } }
     private float repulsion   { get { return boidController.repulsion;  } }
-    private float range       { get { return boidController.range; } }
+    private float cohesionRange       { get { return boidController.cohesionRange; } }
+    private float   interactionRange { get { return boidController.interactionRange; } }
     private Vector3 maxRandomRotation { get { return boidController.maxRandomRotation; } }
 
     private GameObject[] global_attractors {
@@ -52,6 +53,9 @@ public class BoidFlocking : MonoBehaviour
 
     private GameObject[] local_attractors;
     private GameObject[] local_repulsors;
+
+
+
 
     public void startMovment()
     {
@@ -113,7 +117,7 @@ public class BoidFlocking : MonoBehaviour
 
     private Vector3 getCohesionVector()
     {
-        return tickFunction((flockCenter - transform.position), range);
+        return tickFunction((flockCenter - transform.position), cohesionRange);
     }
     private Vector3 getAlignmentVector()
     {
@@ -125,7 +129,7 @@ public class BoidFlocking : MonoBehaviour
         Vector3 repulsionVector = Vector3.zero;
         foreach (GameObject repuslor in global_repulsors)
         {
-            if (repuslor != null) { repulsionVector += dropOff(transform.position - repuslor.transform.position, range); }
+            if (repuslor != null) { repulsionVector += tickFunction(transform.position - repuslor.transform.position, interactionRange); }
         }
         return repulsionVector;
     }
@@ -135,7 +139,7 @@ public class BoidFlocking : MonoBehaviour
         Vector3 attractionVector = Vector3.zero;
         foreach (GameObject attractor in global_attractors)
         {
-            if (attractor != null) { attractionVector += dropOff(attractor.transform.position - transform.position, range); }
+            if (attractor != null) { attractionVector += tickFunction(attractor.transform.position - transform.position, interactionRange); }
         }
         return attractionVector;
     }
@@ -146,38 +150,25 @@ public class BoidFlocking : MonoBehaviour
 
         boidBehaviour = BoidBehaviour.NORMAL;
     }
-    private float dropOff( float x, float range)
+
+
+    //********************************************//
+    //       MATHS FUNCTIONS                      //
+    //********************************************//
+
+    private float tickFunction(float x, float p)
     {
         float sign = Mathf.Sign(x);
         x = Mathf.Abs(x);
-        if ( x != 0) { x = range / x; }
-        return x * sign;
-    }
-    private Vector3 dropOff(Vector3 x, float range)
-    {
-        return new Vector3(   dropOff(x.x, range),
-                              dropOff(x.y, range),
-                              dropOff(x.z, range));
-    }
 
-    private float tickFunction(float x, float p1)
-    {
-        float sign = Mathf.Sign(x);
-        x = Mathf.Abs(x);
-        x = Mathf.Pow((x / p1), 2.0f) - 1.0f;
+        x = x - p;
 
         return x * sign;
+
+
     }
-    public Vector3 tickFunction(Vector3 x, float p1)
+    private Vector3 tickFunction(Vector3 x, float range)
     {
-        return new Vector3(   tickFunction(x.x, p1),
-                              tickFunction(x.y, p1),
-                              tickFunction(x.z, p1));
-    }
-    public Vector3 tickFunction(Vector3 x, Vector3 p1)
-    {
-        return new Vector3(   tickFunction(x.x, p1.x),
-                              tickFunction(x.y, p1.y),
-                              tickFunction(x.z, p1.z));
+        return x.normalized * tickFunction(x.magnitude, range);
     }
 }
