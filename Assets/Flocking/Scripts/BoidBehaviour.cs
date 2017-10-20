@@ -6,6 +6,7 @@ public class BoidBehaviour{
     //*************************************************************************************************************************//
     //       PUBLIC  PROPERTIES                   //
     //********************************************//
+    // FLOCKING
     public float minVelocity = 0.2f;
     public float maxVelocity = 3.0f;
     public float randomness = 2;
@@ -18,6 +19,10 @@ public class BoidBehaviour{
     public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
     public Dictionary<string, GameObject> attractors = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> repulsors  = new Dictionary<string, GameObject>();
+
+    // APPEARANCE
+    public float scale = 1.0f;
+    public float intensity = 1.0f;
 
     //*************************************************************************************************************************//
     //       PUBLIC  METHODS                      //

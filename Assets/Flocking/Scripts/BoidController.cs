@@ -73,23 +73,36 @@ public class BoidController : MonoBehaviour
         instantiateFlock();  // Intantiate flock
 
         boidBehaviour = new BoidBehaviour();
-
-        boidBehaviour.minVelocity = minVelocity;
-        boidBehaviour.maxVelocity = maxVelocity;
-        boidBehaviour.randomness = randomness;
-        boidBehaviour.cohesion = cohesion;
-        boidBehaviour.alignment = alignment;
-        boidBehaviour.attraction = attraction;
-        boidBehaviour.repulsion = repulsion;
-        boidBehaviour.cohesionRange = cohesionRange;
-        boidBehaviour.interactionRange = interactionRange;
-        boidBehaviour.maxRandomRotation = maxRandomRotation;
-
-        boidBehaviour.setDefaultAttractors(attractors);
-        boidBehaviour.setDefaultRepulsors( repulsors );
+        loadPropertiesToBoidBehaviour();       
 
         UpdateAggregateMovement();
     }
+    private void OnValidate()
+    {
+        loadPropertiesToBoidBehaviour();
+    }
+    private void loadPropertiesToBoidBehaviour()
+    {
+        if(boidBehaviour != null)
+        {
+            boidBehaviour.minVelocity = minVelocity;
+            boidBehaviour.maxVelocity = maxVelocity;
+            boidBehaviour.randomness = randomness;
+            boidBehaviour.cohesion = cohesion;
+            boidBehaviour.alignment = alignment;
+            boidBehaviour.attraction = attraction;
+            boidBehaviour.repulsion = repulsion;
+            boidBehaviour.cohesionRange = cohesionRange;
+            boidBehaviour.interactionRange = interactionRange;
+            boidBehaviour.maxRandomRotation = maxRandomRotation;
+
+            boidBehaviour.setDefaultAttractors(attractors);
+            boidBehaviour.setDefaultRepulsors(repulsors);
+        }
+
+    }
+
+
     void Start()
     {
         foreach (GameObject boid in boids)
@@ -120,6 +133,9 @@ public class BoidController : MonoBehaviour
 
             newBoid.transform.parent = transform;
             newBoid.transform.localPosition = position;
+
+            newBoid.AddComponent<BoidAppearance>();
+            newBoid.GetComponent<BoidAppearance>().SetController(this);
 
             newBoid.AddComponent<BoidFlocking>();
             newBoid.GetComponent<BoidFlocking>().SetController(this);
