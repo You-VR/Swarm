@@ -7,10 +7,18 @@ public class BoidController : MonoBehaviour
     //*************************************************************************************************************************//
     //      PUBLIC EDITOR PROPERTIES              //
     //********************************************//
+    [Header("Audio Sources")]
+    public GameObject leftChannel;
+    public GameObject rightChannel;
+
+    [Header("Init Parameters")]
     public GameObject defaultPrefab;
     public int flockSize = 20;
+    public GameObject[] attractors;
+    public GameObject[] repulsors;
 
-    [Header("Swarm Parameteres")]
+
+    [Header("Swarm Parameters")]
     public float minVelocity = 0.2f;
     public float maxVelocity = 3.0f;
 
@@ -23,23 +31,19 @@ public class BoidController : MonoBehaviour
     public float interactionRange = 1;
     public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
 
-    [Header("Default swarm attractors/repulsors")]
-    public GameObject[] _attractors;
-    public GameObject[] _repulsors;
 
     //*************************************************************************************************************************//
     //       OTHER   PROPERTIES                   //
     //********************************************//
+    public BoidBehaviour boidBehaviour;
 
-    public Dictionary<string, GameObject> attractors { get; private set; }
-    public Dictionary<string, GameObject> repulsors  { get; private set; }
     public Vector3 flockCenter   { get; private set; }
     public Vector3 flockVelocity { get; private set; }
+    public Vector3 flockSTD { get; private set; }
 
     //*************************************************************************************************************************//
     //       PRIVATE PROPERTIES                   //
     //********************************************//
-
     private List<GameObject> boids;
 
     //*************************************************************************************************************************//
@@ -58,15 +62,6 @@ public class BoidController : MonoBehaviour
         }
     }
 
-    public int removeAttractor(GameObject gameObject, string name) { return removeFromDictionary(attractors, gameObject, name); }
-
-    public int addAttractor(   GameObject gameObject, string name) { return addToDictionary(attractors, gameObject, name); }
-
-    public int removeRepulsor( GameObject gameObject, string name) { return removeFromDictionary(repulsors, gameObject, name); }
-
-    public int addRepulsor(    GameObject gameObject, string name) { return addToDictionary(repulsors, gameObject, name); }
-
-
 
     //*************************************************************************************************************************//
     //       PRIVATE METHODS                      //
@@ -77,13 +72,21 @@ public class BoidController : MonoBehaviour
         boids = new List<GameObject>();
         instantiateFlock();  // Intantiate flock
 
-        // Set default attractors
-        attractors = new Dictionary<string, GameObject>();
-        setDefaultInteractions(attractors, _attractors);
+        boidBehaviour = new BoidBehaviour();
 
-        // Set default repulsors
-        repulsors = new Dictionary<string, GameObject>();
-        setDefaultInteractions(repulsors, _repulsors);
+        boidBehaviour.minVelocity = minVelocity;
+        boidBehaviour.maxVelocity = maxVelocity;
+        boidBehaviour.randomness = randomness;
+        boidBehaviour.cohesion = cohesion;
+        boidBehaviour.alignment = alignment;
+        boidBehaviour.attraction = attraction;
+        boidBehaviour.repulsion = repulsion;
+        boidBehaviour.cohesionRange = cohesionRange;
+        boidBehaviour.interactionRange = interactionRange;
+        boidBehaviour.maxRandomRotation = maxRandomRotation;
+
+        boidBehaviour.setDefaultAttractors(attractors);
+        boidBehaviour.setDefaultRepulsors( repulsors );
 
         UpdateAggregateMovement();
     }
@@ -98,6 +101,9 @@ public class BoidController : MonoBehaviour
     void Update()
     {
         UpdateAggregateMovement();
+
+        leftChannel.transform.position  = flockCenter + flockSTD;
+        rightChannel.transform.position = flockCenter - flockSTD;
     }
 
     private void instantiateFlock()
@@ -130,54 +136,35 @@ public class BoidController : MonoBehaviour
         GetComponent<Collider>().enabled = false;
     }
 
-    private void setDefaultInteractions(Dictionary<string, GameObject> interactor, GameObject[] _interactors )
-    {
-        int count = 0;
-        foreach (GameObject gameObject in _interactors)
-        {
-            if (gameObject != null) { interactor.Add("Default_" + count.ToString(), gameObject); }
-            count++;
-        }
-    }
 
     private void UpdateAggregateMovement()
     {
-        Vector3 theCenter = Vector3.zero;
+        Vector3 theCenter   = Vector3.zero;
         Vector3 theVelocity = Vector3.zero;
+        Vector3 theSTD      = Vector3.zero;
 
         foreach (GameObject boid in boids)
         {
-            theCenter = theCenter + boid.transform.position;
-            theVelocity = theVelocity + boid.GetComponent<Rigidbody>().velocity;
+            theCenter   += boid.transform.position;
+            theVelocity += boid.GetComponent<Rigidbody>().velocity;
         }
 
         flockCenter = theCenter / (flockSize);
         flockVelocity = theVelocity / (flockSize);
-    }
 
-    private int addToDictionary(Dictionary<string, GameObject> dictionary, GameObject gameObject, string name)
-    {
-        if (dictionary.ContainsKey(name))
+        foreach (GameObject boid in boids)
         {
-            dictionary.Remove(name);
-            return 0;
+            theSTD += new Vector3 ( Mathf.Pow( boid.transform.position.x - flockCenter.x, 2),
+                                    Mathf.Pow( boid.transform.position.y - flockCenter.y, 2),
+                                    Mathf.Pow( boid.transform.position.z - flockCenter.z, 2) );
         }
-        else
-        {
-            return -1;
-        }
-    }
-    private int removeFromDictionary(Dictionary<string, GameObject> dictionary, GameObject gameObject, string name)
-    {
-        if (dictionary.ContainsKey(name))
-        {
-            return -1;
-        }
-        else
-        {
-            dictionary.Add(name, gameObject);
-            return 0;
-        }
-    }
 
+        theSTD = theSTD / (flockSize - 1);
+        flockSTD = new Vector3(Mathf.Sqrt(theSTD.x),
+                                Mathf.Sqrt(theSTD.y),
+                                Mathf.Sqrt(theSTD.z));
+
+        flockCenter = theCenter / (flockSize);
+        flockVelocity = theVelocity / (flockSize);
+    }
 }

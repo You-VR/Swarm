@@ -5,41 +5,36 @@ using UnityEngine;
 
 public class BoidFlocking : MonoBehaviour
 {
-    enum BoidBehaviour
-    {
-        NORMAL,
-        EXCITED,
-        FREE
-    };
-
     // Global parameters
-    private float minVelocity { get { return boidController.minVelocity;   } }
-    private float maxVelocity { get { return boidController.maxVelocity;   } }
-    private float randomness  { get { return boidController.randomness;    } }
+
+
+    private float minVelocity { get { return boidController.boidBehaviour.minVelocity;   } }
+    private float maxVelocity { get { return boidController.boidBehaviour.maxVelocity;   } }
+    private float randomness  { get { return boidController.boidBehaviour.randomness;    } }
     private float cohesion    {
         get {
-            return boidController.cohesion + (boidController.cohesion * Mathf.Sin(Time.time) / 2);
+            return boidController.boidBehaviour.cohesion + (boidController.boidBehaviour.cohesion * Mathf.Sin(Time.time) / 2);
         }
     }
-    private float alignment   { get { return boidController.alignment;     } }
-    private float attraction  { get { return boidController.attraction; } }
-    private float repulsion   { get { return boidController.repulsion;  } }
-    private float cohesionRange       { get { return boidController.cohesionRange; } }
-    private float   interactionRange { get { return boidController.interactionRange; } }
-    private Vector3 maxRandomRotation { get { return boidController.maxRandomRotation; } }
+    private float alignment   { get { return boidController.boidBehaviour.alignment;     } }
+    private float attraction  { get { return boidController.boidBehaviour.attraction; } }
+    private float repulsion   { get { return boidController.boidBehaviour.repulsion;  } }
+    private float cohesionRange       { get { return boidController.boidBehaviour.cohesionRange; } }
+    private float   interactionRange { get { return boidController.boidBehaviour.interactionRange; } }
+    private Vector3 maxRandomRotation { get { return boidController.boidBehaviour.maxRandomRotation; } }
 
     private GameObject[] global_attractors {
         get {
-            GameObject[] array = new GameObject[boidController.attractors.Values.Count];
-            boidController.attractors.Values.CopyTo(array, 0);
+            GameObject[] array = new GameObject[boidController.boidBehaviour.attractors.Values.Count];
+            boidController.boidBehaviour.attractors.Values.CopyTo(array, 0);
             return array;
         }
     }
 
     private GameObject[] global_repulsors  {
         get {
-            GameObject[] array = new GameObject[boidController.repulsors.Values.Count];
-            boidController.repulsors.Values.CopyTo(array, 0);
+            GameObject[] array = new GameObject[boidController.boidBehaviour.repulsors.Values.Count];
+            boidController.boidBehaviour.repulsors.Values.CopyTo(array, 0);
             return array;
         }
     }
@@ -49,12 +44,6 @@ public class BoidFlocking : MonoBehaviour
 
     // Local properties
     private BoidController boidController;
-    private BoidBehaviour boidBehaviour;
-
-    private GameObject[] local_attractors;
-    private GameObject[] local_repulsors;
-
-
 
 
     public void startMovment()
@@ -131,7 +120,7 @@ public class BoidFlocking : MonoBehaviour
         {
             if (repuslor != null) { repulsionVector += tickFunction(transform.position - repuslor.transform.position, interactionRange); }
         }
-        return repulsionVector;
+        return repulsionVector / global_repulsors.Length;
     }
 
     private Vector3 getAttractionVector()
@@ -141,14 +130,12 @@ public class BoidFlocking : MonoBehaviour
         {
             if (attractor != null) { attractionVector += tickFunction(attractor.transform.position - transform.position, interactionRange); }
         }
-        return attractionVector;
+        return attractionVector / global_attractors.Length;
     }
 
     public void SetController(BoidController theBoidController)
     {
         boidController = theBoidController;
-
-        boidBehaviour = BoidBehaviour.NORMAL;
     }
 
 
