@@ -23,15 +23,15 @@ public class BoidBehaviorManager : MonoBehaviour {
         //*******************************************************
         // START BEHAVIOUR
 
-        boidBehaviour.minVelocity = 2.0f;
-        boidBehaviour.maxVelocity = 5.0f;
-        boidBehaviour.randomness = 5.0f;
-        boidBehaviour.cohesion = 0.0f;
-        boidBehaviour.alignment  = 0.0f;
+        boidBehaviour.minVelocity = 0.2f;
+        boidBehaviour.maxVelocity = 1.5f;
+        boidBehaviour.randomness = 4.0f;
+        boidBehaviour.cohesion = 0.5f;
+        boidBehaviour.alignment  = -1.0f;
         boidBehaviour.attraction = 1.0f;
-        boidBehaviour.repulsion = 1.2f;
-        boidBehaviour.cohesionRange = 5.0f;
-        boidBehaviour.interactionRange = 8.0f;
+        boidBehaviour.repulsion = 2.2f;
+        boidBehaviour.cohesionRange = 10.0f;
+        boidBehaviour.interactionRange = 3.0f;
 
         boidBehaviour.setDefaultAttractors( new GameObject[] {  glowSphere,
                                                                 flower      });
@@ -40,27 +40,33 @@ public class BoidBehaviorManager : MonoBehaviour {
                                                                 rightHand,
                                                                 head        });
 
+        boidBehaviour.scale = 1.0f;
+        boidBehaviour.intensity = 1.0f;
+
         stateList.Add("Start", boidBehaviour);
 
         //*******************************************************
         // BALL TOUCHED
         boidBehaviour = new BoidBehaviour();
-        boidBehaviour.minVelocity = 1.0f;
-        boidBehaviour.maxVelocity = 2.0f;
-        boidBehaviour.randomness = 2.0f;
-        boidBehaviour.cohesion = 0.5f;
-        boidBehaviour.alignment = 1.0f;
-        boidBehaviour.attraction = 1.0f;
-        boidBehaviour.repulsion = 1.2f;
-        boidBehaviour.cohesionRange = 4.0f;
-        boidBehaviour.interactionRange = 4.0f;
 
+        boidBehaviour.minVelocity = 0.2f;
+        boidBehaviour.maxVelocity = 2.5f;
+        boidBehaviour.randomness = 4.0f;
+        boidBehaviour.cohesion = 0.5f;
+        boidBehaviour.alignment = -1.0f;
+        boidBehaviour.attraction = 1.0f;
+        boidBehaviour.repulsion = 2.2f;
+        boidBehaviour.cohesionRange = 4.0f;
+        boidBehaviour.interactionRange = 2.0f;
         boidBehaviour.setDefaultAttractors(new GameObject[] {  glowSphere,
                                                                 flower      });
 
         boidBehaviour.setDefaultRepulsors(new GameObject[] {  leftHand,
                                                                 rightHand,
                                                                 head        });
+
+        boidBehaviour.scale = 1.0f;
+        boidBehaviour.intensity = 0.5f;
 
         stateList.Add("Ball_touched", boidBehaviour);
 
@@ -74,8 +80,8 @@ public class BoidBehaviorManager : MonoBehaviour {
         boidBehaviour.alignment = 1.0f;
         boidBehaviour.attraction = 1.0f;
         boidBehaviour.repulsion = 1.2f;
-        boidBehaviour.cohesionRange = 5.0f;
-        boidBehaviour.interactionRange = 6.0f;
+        boidBehaviour.cohesionRange = 2.0f;
+        boidBehaviour.interactionRange = 1.0f;
 
         boidBehaviour.setDefaultAttractors(new GameObject[] {  glowSphere,
                                                                 flower      });
@@ -84,27 +90,34 @@ public class BoidBehaviorManager : MonoBehaviour {
                                                                 rightHand,
                                                                 head        });
 
+        boidBehaviour.scale = 2.0f;
+        boidBehaviour.intensity = 2.0f;
+
         stateList.Add("Ball_on_pole", boidBehaviour);
 
         //*******************************************************
         // FLOWER IN HAND
         boidBehaviour = new BoidBehaviour();
-        boidBehaviour.minVelocity = 1.0f;
-        boidBehaviour.maxVelocity = 3.0f;
+
+        boidBehaviour.minVelocity = 0.2f;
+        boidBehaviour.maxVelocity = 2.5f;
         boidBehaviour.randomness = 1.0f;
-        boidBehaviour.cohesion = 1.0f;
+        boidBehaviour.cohesion = 1.5f;
         boidBehaviour.alignment = 1.0f;
-        boidBehaviour.attraction = 2.0f;
-        boidBehaviour.repulsion = 1.2f;
-        boidBehaviour.cohesionRange = 5.0f;
-        boidBehaviour.interactionRange = 4.0f;
+        boidBehaviour.attraction = 3.0f;
+        boidBehaviour.repulsion = 2.2f;
+        boidBehaviour.cohesionRange = 0.5f;
+        boidBehaviour.interactionRange = 0.5f;
 
         boidBehaviour.setDefaultAttractors(new GameObject[] {   leftHand,
                                                                 rightHand,
                                                                 head,
                                                                 flower      });
 
-        boidBehaviour.setDefaultRepulsors(new GameObject[] {  glowSphere });
+        boidBehaviour.setDefaultRepulsors(new GameObject[] {   });
+
+        boidBehaviour.scale = 0.7f;
+        boidBehaviour.intensity = 1.0f;
 
         stateList.Add("Flower_in_hand", boidBehaviour);
 
@@ -135,6 +148,7 @@ public class BoidBehaviorManager : MonoBehaviour {
         while (true)
         {
             Debug.Log("State change to " + temp[i]);
+
             boidController.boidBehaviour = stateList[temp[i]];
 
             i++;

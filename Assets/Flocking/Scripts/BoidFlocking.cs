@@ -13,7 +13,7 @@ public class BoidFlocking : MonoBehaviour
     private float randomness  { get { return boidController.boidBehaviour.randomness;    } }
     private float cohesion    {
         get {
-            return boidController.boidBehaviour.cohesion + (boidController.boidBehaviour.cohesion * Mathf.Sin(Time.time) / 2);
+            return boidController.boidBehaviour.cohesion + (boidController.boidBehaviour.cohesion * Mathf.Sin(Time.time) / 3);
         }
     }
     private float alignment   { get { return boidController.boidBehaviour.alignment;     } }
@@ -116,21 +116,34 @@ public class BoidFlocking : MonoBehaviour
     private Vector3 getRepulsionVector()
     {
         Vector3 repulsionVector = Vector3.zero;
-        foreach (GameObject repuslor in global_repulsors)
+        if(global_repulsors.Length > 0 )
         {
-            if (repuslor != null) { repulsionVector += tickFunction(transform.position - repuslor.transform.position, interactionRange); }
-        }
-        return repulsionVector / global_repulsors.Length;
+            foreach (GameObject repuslor in global_repulsors)
+            {
+                if (repuslor != null) { repulsionVector += tickFunction(transform.position - repuslor.transform.position, interactionRange); }
+            }
+            return repulsionVector / global_repulsors.Length;
+        } else
+        {
+            return repulsionVector;
+        }        
     }
 
     private Vector3 getAttractionVector()
     {
         Vector3 attractionVector = Vector3.zero;
-        foreach (GameObject attractor in global_attractors)
+        if (global_attractors.Length > 0)
         {
-            if (attractor != null) { attractionVector += tickFunction(attractor.transform.position - transform.position, interactionRange); }
+            foreach (GameObject attractor in global_attractors)
+            {
+                if (attractor != null) { attractionVector += tickFunction(attractor.transform.position - transform.position, interactionRange); }
+            }
+            return attractionVector / global_attractors.Length;
         }
-        return attractionVector / global_attractors.Length;
+        else
+        {
+            return attractionVector;
+        }
     }
 
     public void SetController(BoidController theBoidController)
