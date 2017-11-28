@@ -13,6 +13,7 @@ public class BoidBehaviour{
     public float cohesion = 1;
     public float alignment = 1;
     public float attraction = 1;
+    public float orbit = 1;
     public float repulsion = 1;
     public float cohesionRange = 4;
     public float interactionRange = 1;

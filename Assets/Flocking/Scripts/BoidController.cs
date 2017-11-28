@@ -26,6 +26,7 @@ public class BoidController : MonoBehaviour
     public float cohesion    = 1;
     public float alignment   = 1;
     public float attraction  = 1;
+    public float orbit       = 1;
     public float repulsion   = 1;
     public float cohesionRange = 4;
     public float interactionRange = 1;
@@ -90,6 +91,7 @@ public class BoidController : MonoBehaviour
             boidBehaviour.randomness = randomness;
             boidBehaviour.cohesion = cohesion;
             boidBehaviour.alignment = alignment;
+            boidBehaviour.alignment = orbit;
             boidBehaviour.attraction = attraction;
             boidBehaviour.repulsion = repulsion;
             boidBehaviour.cohesionRange = cohesionRange;

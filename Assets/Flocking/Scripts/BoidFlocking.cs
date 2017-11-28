@@ -19,6 +19,7 @@ public class BoidFlocking : MonoBehaviour
     private float alignment   { get { return boidController.boidBehaviour.alignment;     } }
     private float attraction  { get { return boidController.boidBehaviour.attraction; } }
     private float repulsion   { get { return boidController.boidBehaviour.repulsion;  } }
+    private float orbit { get { return boidController.boidBehaviour.orbit; } }
     private float cohesionRange       { get { return boidController.boidBehaviour.cohesionRange; } }
     private float   interactionRange { get { return boidController.boidBehaviour.interactionRange; } }
     private Vector3 maxRandomRotation { get { return boidController.boidBehaviour.maxRandomRotation; } }
@@ -101,7 +102,24 @@ public class BoidFlocking : MonoBehaviour
         return      cohesion   * getCohesionVector()  +
                     alignment  * getAlignmentVector() +
                     repulsion  * getRepulsionVector() +
-                    attraction * getAttractionVector();
+                    attraction * getAttractionVector() +
+                    orbit      * getOrbitVector();
+    }
+    private Vector3 getOrbitVector()
+    {
+        Vector3 attractionVector = Vector3.zero;
+        if (global_attractors.Length > 0)
+        {
+            Vector3 attractor = global_attractors[0].transform.position;
+
+            return Vector3.Cross(attractor - transform.position, Vector3.up);
+
+
+        }
+        else
+        {
+            return attractionVector;
+        }
     }
 
     private Vector3 getCohesionVector()
