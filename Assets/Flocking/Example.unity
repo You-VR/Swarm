@@ -1274,6 +1274,11 @@ Prefab:
       propertyPath: orbit
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114812298975995322, guid: 346c7b18abe849043a3f0e1b6b681dd5,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 346c7b18abe849043a3f0e1b6b681dd5, type: 2}
   m_IsPrefabParent: 0
