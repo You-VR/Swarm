@@ -1,49 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace VonderBoid
 {
+
 
     public class BoidController : MonoBehaviour
     {
         //*************************************************************************************************************************//
         //      PUBLIC EDITOR PROPERTIES              //
         //********************************************//
-        [Header("Audio Sources")]
+
         public GameObject leftChannel;
         public GameObject rightChannel;
-
-        [Header("Init Parameters")]
+        
         public GameObject defaultPrefab;
         public int flockSize = 20;
-        public GameObject[] attractors;
-        public GameObject[] repulsors;
 
+        public BoidBehaviour currentBoidBehaviour { get { return availableBoidBehaviours[0]; } }
 
-        [Header("Swarm Parameters")]
-        public float minVelocity = 0.2f;
-        public float maxVelocity = 3.0f;
-
-        public float randomness = 2;
-        public float cohesion = 1;
-        public float alignment = 1;
-        public float attraction = 1;
-        public float orbit = 1;
-        public float repulsion = 1;
-        public float cohesionRange = 4;
-        public float interactionRange = 1;
-        public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
-
+        public List<BoidBehaviour> availableBoidBehaviours;
 
         //*************************************************************************************************************************//
         //       OTHER   PROPERTIES                   //
         //********************************************//
-        public BoidBehaviour boidBehaviour;
 
-        public Vector3 flockCenter { get; private set; }
+
+        public Vector3 flockCenter   { get; private set; }
         public Vector3 flockVelocity { get; private set; }
-        public Vector3 flockSTD { get; private set; }
+        public Vector3 flockSTD      { get; private set; }
 
         //*************************************************************************************************************************//
         //       PRIVATE PROPERTIES                   //
@@ -74,45 +61,15 @@ namespace VonderBoid
         void Awake()
         {
             boids = new List<GameObject>();
-            instantiateFlock();  // Intantiate flock
-
-            boidBehaviour = new BoidBehaviour();
-            loadPropertiesToBoidBehaviour();
-
-            UpdateAggregateMovement();
         }
-        private void OnValidate()
-        {
-            loadPropertiesToBoidBehaviour();
-        }
-        private void loadPropertiesToBoidBehaviour()
-        {
-            if (boidBehaviour != null)
-            {
-                boidBehaviour.minVelocity = minVelocity;
-                boidBehaviour.maxVelocity = maxVelocity;
-                boidBehaviour.randomness = randomness;
-                boidBehaviour.cohesion = cohesion;
-                boidBehaviour.alignment = alignment;
-                boidBehaviour.orbit = orbit;
-                boidBehaviour.attraction = attraction;
-                boidBehaviour.repulsion = repulsion;
-                boidBehaviour.cohesionRange = cohesionRange;
-                boidBehaviour.interactionRange = interactionRange;
-                boidBehaviour.maxRandomRotation = maxRandomRotation;
-
-                boidBehaviour.setDefaultAttractors(attractors);
-                boidBehaviour.setDefaultRepulsors(repulsors);
-            }
-
-        }
-
 
         void Start()
         {
+            InstantiateFlock();  // Intantiate flock
+
             foreach (GameObject boid in boids)
             {
-                boid.GetComponent<BoidFlocking>().startMovment();
+                boid.GetComponent<BoidFlocking>().startMovement();
             }
         }
 
@@ -124,7 +81,7 @@ namespace VonderBoid
             rightChannel.transform.position = flockCenter - flockSTD;
         }
 
-        private void instantiateFlock()
+        private void InstantiateFlock()
         {
             for (var i = 0; i < flockSize; i++)
             {
@@ -187,6 +144,95 @@ namespace VonderBoid
 
             flockCenter = theCenter / (flockSize);
             flockVelocity = theVelocity / (flockSize);
+        }
+    }
+
+    [CustomEditor(typeof(BoidController))]
+    public class BoidControllerEditor : Editor
+    {
+        private bool 
+            showGeneralSettings = true,
+            showAudioOptions = false,
+            showBoidBehaviours = false;
+
+        private static GUIContent
+            moveButtonContent = new GUIContent("\u21b4", "move down"),
+            duplicateButtonContent = new GUIContent("+", "duplicate"),
+            deleteButtonContent = new GUIContent("-", "delete");
+
+        SerializedProperty boidBehaviours;
+        void OnEnable()
+        {
+            boidBehaviours = serializedObject.FindProperty("availableBoidBehaviours");
+
+            if (boidBehaviours.arraySize == 0) { InitList(); }
+        }
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+
+            // General Settings
+            showGeneralSettings = EditorGUILayout.Foldout(showGeneralSettings, "General Settings", EditorStyles.foldout);
+            if (showGeneralSettings)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultPrefab"));
+                EditorGUILayout.IntSlider(serializedObject.FindProperty("flockSize"), 1, 300);
+            }
+
+            // Audio Settings
+            showAudioOptions = EditorGUILayout.Foldout(showAudioOptions, "Audio Settings", EditorStyles.foldout);
+            if (showAudioOptions)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("leftChannel"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("rightChannel"));
+            }
+
+            showBoidBehaviours = EditorGUILayout.Foldout(showBoidBehaviours, "Boid Behaviours", EditorStyles.foldout);
+            if (boidBehaviours.arraySize == 0) { InitList(); }
+            if (showBoidBehaviours)
+            {
+                ShowBoidBehaviours(boidBehaviours);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+
+        private void InitList()
+        {
+            boidBehaviours.InsertArrayElementAtIndex(0);
+            serializedObject.ApplyModifiedProperties();
+        }
+
+
+        private void ShowBoidBehaviours(SerializedProperty list)
+        {
+            EditorGUI.indentLevel = 1;
+            for (int i = 0; i < list.arraySize; i++)
+            {
+                var element = list.GetArrayElementAtIndex(i);
+
+                EditorGUILayout.PropertyField(element, true);
+
+                ShowButtons(list, i);
+            }
+        }
+
+        private static void ShowButtons(SerializedProperty list, int index)
+        {
+            if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
+            {
+                list.MoveArrayElement(index, index + 1);
+            }
+            if (GUILayout.Button(duplicateButtonContent, EditorStyles.miniButtonMid))
+            {
+                list.InsertArrayElementAtIndex(index);
+            }
+            if (GUILayout.Button(deleteButtonContent, EditorStyles.miniButtonRight))
+            {
+                list.DeleteArrayElementAtIndex(index);
+            }
         }
     }
 }

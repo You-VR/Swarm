@@ -7,8 +7,8 @@ namespace VonderBoid
     public class BoidAppearance : MonoBehaviour
     {
         // Global parameters
-        private float scale { get { return boidController.boidBehaviour.scale; } }
-        private float intensity { get { return boidController.boidBehaviour.intensity; } }
+        private float scale { get { return boidController.currentBoidBehaviour.scale; } }
+        private float intensity { get { return boidController.currentBoidBehaviour.intensity; } }
 
 
         // Local properties

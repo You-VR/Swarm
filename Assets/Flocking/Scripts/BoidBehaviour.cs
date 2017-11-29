@@ -1,93 +1,102 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace VonderBoid
 {
+    [Serializable]
     public class BoidBehaviour
     {
+
         //*************************************************************************************************************************//
         //       PUBLIC  PROPERTIES                   //
         //********************************************//
+        [SerializeField]
+        public string behaviourName;
+
         // FLOCKING
         public float minVelocity = 0.2f;
         public float maxVelocity = 3.0f;
         public float randomness = 2;
-        public float cohesion = 1;
-        public float alignment = 1;
-        public float attraction = 1;
-        public float orbit = 1;
-        public float repulsion = 1;
-        public float cohesionRange = 4;
-        public float interactionRange = 1;
         public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
-        public Dictionary<string, GameObject> attractors = new Dictionary<string, GameObject>();
-        public Dictionary<string, GameObject> repulsors = new Dictionary<string, GameObject>();
+
+        [SerializeField]
+        public List<BoidBehaviorType> boidBehaviorTypes;
+
 
         // APPEARANCE
         public float scale = 1.0f;
         public float intensity = 1.0f;
 
-        //*************************************************************************************************************************//
-        //       PUBLIC  METHODS                      //
-        //********************************************//
-        public void setDefaultAttractors(GameObject[] _attractors)
+    }
+
+    [CustomPropertyDrawer(typeof(BoidBehaviour))]
+    public class BoidBehaviourDrawer : PropertyDrawer
+    {
+        enum BoidBehaviorTypes
         {
-            attractors.Clear();
-            int count = 0;
-            foreach (GameObject gameObject in _attractors)
+            Attraction,
+            Repulsion
+        }
+        BoidBehaviorTypes selectedType;
+
+
+        bool showBoidBehaviourTypes;
+
+        private static GUIContent 
+            moveButtonContent  = new GUIContent("\u21b4", "Add"),
+            clearButtonContent = new GUIContent("x", "Clear");
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            //EditorGUILayout.PropertyField(property, true);
+
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("behaviourName"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("minVelocity"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("maxVelocity"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("randomness"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("maxRandomRotation"));
+
+            // Audio Settings
+            showBoidBehaviourTypes = EditorGUILayout.Foldout(showBoidBehaviourTypes, "BoidBehaviours", EditorStyles.foldout);
+            if (showBoidBehaviourTypes)
             {
-                if (gameObject != null) { addAttractor(gameObject, "Default_" + count.ToString()); }
-                count++;
+                ShowBoidBehaviours(property.FindPropertyRelative("boidBehaviorTypes"));
+            }
+
+        }
+
+        private void ShowBoidBehaviours(SerializedProperty list)
+        {
+            EditorGUI.indentLevel = 2;
+            ShowButtons(list);
+
+            for (int i = 0; i < list.arraySize; i++)
+            {
+                var element = list.GetArrayElementAtIndex(i);
+
+                EditorGUILayout.PropertyField(element, true);
             }
         }
 
-        public void setDefaultRepulsors(GameObject[] _repulsors)
-        {
-            repulsors.Clear();
-            int count = 0;
-            foreach (GameObject gameObject in _repulsors)
+        private void ShowButtons(SerializedProperty list) {
+            Debug.Log(list.arraySize);
+
+            selectedType = (BoidBehaviorTypes)EditorGUILayout.EnumPopup("Behaviour to create:", selectedType);
+            if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
             {
-                if (gameObject != null) { addRepulsor(gameObject, "Default_" + count.ToString()); }
-                count++;
+                list.InsertArrayElementAtIndex(list.arraySize);
+
+                SerializedProperty newProperty = list.GetEndProperty();
+                newProperty.objectReferenceValue = ScriptableObject.CreateInstance("VonderBoid.BoidBehaviorType"); 
             }
-        }
-
-        public int removeAttractor(GameObject gameObject, string name) { return removeFromDictionary(attractors, gameObject, name); }
-
-        public int addAttractor(GameObject gameObject, string name) { return addToDictionary(attractors, gameObject, name); }
-
-        public int removeRepulsor(GameObject gameObject, string name) { return removeFromDictionary(repulsors, gameObject, name); }
-
-        public int addRepulsor(GameObject gameObject, string name) { return addToDictionary(repulsors, gameObject, name); }
-
-        //*************************************************************************************************************************//
-        //       PRIVATE METHODS                      //
-        //********************************************//
-
-        private int removeFromDictionary(Dictionary<string, GameObject> dictionary, GameObject gameObject, string name)
-        {
-            if (!dictionary.ContainsKey(name))
+            if (GUILayout.Button(clearButtonContent, EditorStyles.miniButtonLeft))
             {
-                dictionary.Remove(name);
-                return 0;
+                list.ClearArray();
             }
-            else
-            {
-                return -1;
-            }
-        }
-        private int addToDictionary(Dictionary<string, GameObject> dictionary, GameObject gameObject, string name)
-        {
-            if (dictionary.ContainsKey(name))
-            {
-                return -1;
-            }
-            else
-            {
-                dictionary.Add(name, gameObject);
-                return 0;
-            }
+
         }
     }
 }

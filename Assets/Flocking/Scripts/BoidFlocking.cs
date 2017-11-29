@@ -7,53 +7,21 @@ namespace VonderBoid
 {
     public class BoidFlocking : MonoBehaviour
     {
-        // Global parameters
-        private float minVelocity { get { return boidController.boidBehaviour.minVelocity; } }
-        private float maxVelocity { get { return boidController.boidBehaviour.maxVelocity; } }
-        private float randomness { get { return boidController.boidBehaviour.randomness; } }
-        private float cohesion
-        {
-            get
-            {
-                return boidController.boidBehaviour.cohesion + (boidController.boidBehaviour.cohesion * Mathf.Sin(Time.time) / 3);
-            }
-        }
-        private float alignment  { get { return boidController.boidBehaviour.alignment;  } }
-        private float attraction { get { return boidController.boidBehaviour.attraction; } }
-        private float repulsion  { get { return boidController.boidBehaviour.repulsion;  } }
-        private float orbit      { get { return boidController.boidBehaviour.orbit;      } }
-        private float cohesionRange       { get { return boidController.boidBehaviour.cohesionRange;     } }
-        private float interactionRange    { get { return boidController.boidBehaviour.interactionRange;  } }
-        private Vector3 maxRandomRotation { get { return boidController.boidBehaviour.maxRandomRotation; } }
-
-        private GameObject[] global_attractors
-        {
-            get
-            {
-                GameObject[] array = new GameObject[boidController.boidBehaviour.attractors.Values.Count];
-                boidController.boidBehaviour.attractors.Values.CopyTo(array, 0);
-                return array;
-            }
-        }
-
-        private GameObject[] global_repulsors
-        {
-            get
-            {
-                GameObject[] array = new GameObject[boidController.boidBehaviour.repulsors.Values.Count];
-                boidController.boidBehaviour.repulsors.Values.CopyTo(array, 0);
-                return array;
-            }
-        }
-
-        private Vector3 flockCenter { get { return boidController.flockCenter; } }
-        private Vector3 flockVelocity { get { return boidController.flockVelocity; } }
-
-        // Local properties
         private BoidController boidController;
+        private BoidBehaviour boidBehaviour {  get { return boidController.currentBoidBehaviour; } }
+
+        private float minVelocity { get { return boidBehaviour.minVelocity; } }
+        private float maxVelocity { get { return boidBehaviour.maxVelocity; } }
+        private float randomness  { get { return boidBehaviour.randomness; } }
+        private Vector3 maxRandomRotation { get { return boidBehaviour.maxRandomRotation; } }
+
+        public Vector3 velocity { get { return GetComponent<Rigidbody>().velocity; } private set { GetComponent<Rigidbody>().velocity = value; } }
+
+        public Vector3 flockCenter   { get { return boidController.flockCenter; } }
+        public Vector3 flockVelocity { get { return boidController.flockVelocity; } }
 
 
-        public void startMovment()
+        public void startMovement()
         {
             StartCoroutine("BoidSteering");
         }
@@ -62,22 +30,22 @@ namespace VonderBoid
         {
             while (true)
             {
-                GetComponent<Rigidbody>().velocity *= 0.99f; // Make variable
+                velocity *= 0.99f; // Make variable
 
                 Vector3 target = getTargetVector();
                 target = randomPerturbations(target);
 
-                GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity + target * Time.deltaTime;
+                velocity = velocity + target * Time.deltaTime;
 
                 // Enforce minimum and maximum speeds for the boids
-                float speed = GetComponent<Rigidbody>().velocity.magnitude;
+                float speed = velocity.magnitude;
                 if (speed > maxVelocity)
                 {
-                    GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * maxVelocity;
+                    velocity = velocity.normalized * maxVelocity;
                 }
                 else if (speed < minVelocity)
                 {
-                    GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * minVelocity;
+                    velocity = velocity.normalized * minVelocity;
                 }
 
                 yield return new WaitForEndOfFrame();
@@ -109,98 +77,13 @@ namespace VonderBoid
         {
             Vector3 targetVector = Vector3.zero;
 
-            targetVector += cohesion   * getCohesionVector();
-            targetVector += alignment  * getAlignmentVector();
-            targetVector += repulsion  * getRepulsionVector();
-            targetVector += attraction * getAttractionVector();
-            targetVector += orbit      * getOrbitVector();
-
-
             return targetVector;
         }
-        private Vector3 getOrbitVector()
-        {
-            Vector3 attractionVector = Vector3.zero;
-            //if (global_attractors.Length > 0)
-            //{
-            //    Vector3 attractor = global_attractors[0].transform.position;
-            //    return Vector3.Cross(attractor - transform.position, Vector3.up);
-            //}
-            //else
-            //{
-            //    return attractionVector;
-            //}
 
-            return Vector3.Cross(flockCenter - transform.position, Vector3.up);
-        }
-
-        private Vector3 getCohesionVector()
-        {
-            return tickFunction((flockCenter - transform.position), cohesionRange);
-        }
-        private Vector3 getAlignmentVector()
-        {
-            return (flockVelocity - GetComponent<Rigidbody>().velocity) * Time.deltaTime;
-        }
-
-        private Vector3 getRepulsionVector()
-        {
-            Vector3 repulsionVector = Vector3.zero;
-            if (global_repulsors.Length > 0)
-            {
-                foreach (GameObject repuslor in global_repulsors)
-                {
-                    if (repuslor != null) { repulsionVector += tickFunction(transform.position - repuslor.transform.position, interactionRange); }
-                }
-                return repulsionVector / global_repulsors.Length;
-            }
-            else
-            {
-                return repulsionVector;
-            }
-        }
-
-        private Vector3 getAttractionVector()
-        {
-            Vector3 attractionVector = Vector3.zero;
-            if (global_attractors.Length > 0)
-            {
-                foreach (GameObject attractor in global_attractors)
-                {
-                    if (attractor != null) { attractionVector += tickFunction(attractor.transform.position - transform.position, interactionRange); }
-                }
-                return attractionVector / global_attractors.Length;
-            }
-            else
-            {
-                return attractionVector;
-            }
-        }
 
         public void SetController(BoidController theBoidController)
         {
             boidController = theBoidController;
-        }
-
-
-        //********************************************//
-        //       MATHS FUNCTIONS                      //
-        //********************************************//
-
-        private float tickFunction(float x, float p)
-        {
-            float sign = Mathf.Sign(x);
-            x = Mathf.Abs(x);
-
-            x = x - p;
-
-            return x * sign;
-
-
-        }
-        private Vector3 tickFunction(Vector3 x, float range)
-        {
-            return x.normalized * tickFunction(x.magnitude, range);
         }
     }
 }
