@@ -19,9 +19,10 @@ namespace VonderBoid
         public GameObject defaultPrefab;
         public int flockSize = 20;
 
-        public BoidBehaviour currentBoidBehaviour { get { return availableBoidBehaviours[0]; } }
+        public BoidBehaviour currentBoidBehaviour { get { return boidBehaviours[0]; } }
 
-        public List<BoidBehaviour> availableBoidBehaviours;
+        public List<BoidBehaviour> boidBehaviours { get { return boidBehaviourCollection.boidBehaviorList; } }
+        public BoidBehaviourCollection boidBehaviourCollection;
 
         //*************************************************************************************************************************//
         //       OTHER   PROPERTIES                   //
@@ -79,6 +80,9 @@ namespace VonderBoid
 
             leftChannel.transform.position = flockCenter + flockSTD;
             rightChannel.transform.position = flockCenter - flockSTD;
+
+
+            Debug.Log("!" + boidBehaviours.Count.ToString());
         }
 
         private void InstantiateFlock()
@@ -150,6 +154,9 @@ namespace VonderBoid
     [CustomEditor(typeof(BoidController))]
     public class BoidControllerEditor : Editor
     {
+        public BoidBehaviourCollection _boidBehaviourCollection;
+        SerializedObject so_boidBehaviourCollection;
+
         private bool 
             showGeneralSettings = true,
             showAudioOptions = false,
@@ -160,12 +167,20 @@ namespace VonderBoid
             duplicateButtonContent = new GUIContent("+", "duplicate"),
             deleteButtonContent = new GUIContent("-", "delete");
 
-        SerializedProperty boidBehaviours;
         void OnEnable()
         {
-            boidBehaviours = serializedObject.FindProperty("availableBoidBehaviours");
+            _boidBehaviourCollection = AssetDatabase.LoadAssetAtPath("Assets/BoidBehaviours.asset",
+                             typeof(BoidBehaviourCollection)) as BoidBehaviourCollection;
 
-            if (boidBehaviours.arraySize == 0) { InitList(); }
+            if( _boidBehaviourCollection == null)
+            {
+                _boidBehaviourCollection = ScriptableObject.CreateInstance<BoidBehaviourCollection>();
+                _boidBehaviourCollection.boidBehaviorList = new List<BoidBehaviour>();
+                AssetDatabase.CreateAsset(_boidBehaviourCollection, "Assets/BoidBehaviours.asset");
+                AssetDatabase.SaveAssets();
+            }
+
+            so_boidBehaviourCollection = new UnityEditor.SerializedObject(_boidBehaviourCollection);
         }
 
         public override void OnInspectorGUI()
@@ -189,50 +204,58 @@ namespace VonderBoid
             }
 
             showBoidBehaviours = EditorGUILayout.Foldout(showBoidBehaviours, "Boid Behaviours", EditorStyles.foldout);
-            if (boidBehaviours.arraySize == 0) { InitList(); }
             if (showBoidBehaviours)
             {
-                ShowBoidBehaviours(boidBehaviours);
+                if (GUILayout.Button("Add Boid Behaviour"))
+                {
+                    BoidBehaviour newBoidBehaviour = ScriptableObject.CreateInstance<BoidBehaviour>();
+                    _boidBehaviourCollection.boidBehaviorList.Add(newBoidBehaviour);
+                    AssetDatabase.AddObjectToAsset(newBoidBehaviour, _boidBehaviourCollection);
+                    AssetDatabase.SaveAssets();
+                }
+
+                EditorGUI.indentLevel = 1;
+                SerializedProperty boidBehaviourList = so_boidBehaviourCollection.FindProperty("boidBehaviorList");
+
+                for (int i = 0; i < boidBehaviourList.arraySize; i++)
+                {
+                    var element = boidBehaviourList.GetArrayElementAtIndex(i);
+
+                    EditorGUILayout.PropertyField(element, true);
+                }
+                serializedObject.FindProperty("boidBehaviourCollection").objectReferenceValue = _boidBehaviourCollection;
             }
 
             serializedObject.ApplyModifiedProperties();
         }
 
+        //private void ShowBoidBehaviours()
+        //{
+        //    EditorGUI.indentLevel = 1;
+        //    for (int i = 0; i < list.arraySize; i++)
+        //    {
+        //        var element = list.GetArrayElementAtIndex(i);
 
-        private void InitList()
-        {
-            boidBehaviours.InsertArrayElementAtIndex(0);
-            serializedObject.ApplyModifiedProperties();
-        }
+        //        EditorGUILayout.PropertyField(element, true);
 
+        //        ShowButtons(list, i);
+        //    }
+        //}
 
-        private void ShowBoidBehaviours(SerializedProperty list)
-        {
-            EditorGUI.indentLevel = 1;
-            for (int i = 0; i < list.arraySize; i++)
-            {
-                var element = list.GetArrayElementAtIndex(i);
-
-                EditorGUILayout.PropertyField(element, true);
-
-                ShowButtons(list, i);
-            }
-        }
-
-        private static void ShowButtons(SerializedProperty list, int index)
-        {
-            if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
-            {
-                list.MoveArrayElement(index, index + 1);
-            }
-            if (GUILayout.Button(duplicateButtonContent, EditorStyles.miniButtonMid))
-            {
-                list.InsertArrayElementAtIndex(index);
-            }
-            if (GUILayout.Button(deleteButtonContent, EditorStyles.miniButtonRight))
-            {
-                list.DeleteArrayElementAtIndex(index);
-            }
-        }
+        //private static void ShowButtons(SerializedProperty list, int index)
+        //{
+        //    if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
+        //    {
+        //        list.MoveArrayElement(index, index + 1);
+        //    }
+        //    if (GUILayout.Button(duplicateButtonContent, EditorStyles.miniButtonMid))
+        //    {
+        //        list.InsertArrayElementAtIndex(index);
+        //    }
+        //    if (GUILayout.Button(deleteButtonContent, EditorStyles.miniButtonRight))
+        //    {
+        //        list.DeleteArrayElementAtIndex(index);
+        //    }
+        //}
     }
 }

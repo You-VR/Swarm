@@ -7,7 +7,7 @@ using UnityEditor;
 namespace VonderBoid
 {
     [Serializable]
-    public class BoidBehaviour
+    public class BoidBehaviour : ScriptableObject
     {
 
         //*************************************************************************************************************************//
@@ -22,36 +22,27 @@ namespace VonderBoid
         public float randomness = 2;
         public Vector3 maxRandomRotation = new Vector3(30.0f, 40.0f, 10.0f);
 
-        [SerializeField]
-        public List<BoidBehaviorType> boidBehaviorTypes;
-
-
         // APPEARANCE
         public float scale = 1.0f;
         public float intensity = 1.0f;
+
+        public List<BoidMovementType> boidMovementTypes;
 
     }
 
     [CustomPropertyDrawer(typeof(BoidBehaviour))]
     public class BoidBehaviourDrawer : PropertyDrawer
     {
-        enum BoidBehaviorTypes
-        {
-            Attraction,
-            Repulsion
-        }
-        BoidBehaviorTypes selectedType;
-
-
         bool showBoidBehaviourTypes;
 
-        private static GUIContent 
-            moveButtonContent  = new GUIContent("\u21b4", "Add"),
+        private static GUIContent
+            moveButtonContent = new GUIContent("\u21b4", "Add"),
             clearButtonContent = new GUIContent("x", "Clear");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            //EditorGUILayout.PropertyField(property, true);
+            SerializedObject propObj = new SerializedObject(property.objectReferenceValue);
+            EditorGUILayout.PropertyField(propObj.FindProperty("behaviourName"));
 
             EditorGUILayout.PropertyField(property.FindPropertyRelative("behaviourName"));
             EditorGUILayout.PropertyField(property.FindPropertyRelative("minVelocity"));
@@ -60,10 +51,10 @@ namespace VonderBoid
             EditorGUILayout.PropertyField(property.FindPropertyRelative("maxRandomRotation"));
 
             // Audio Settings
-            showBoidBehaviourTypes = EditorGUILayout.Foldout(showBoidBehaviourTypes, "BoidBehaviours", EditorStyles.foldout);
+            showBoidBehaviourTypes = EditorGUILayout.Foldout(showBoidBehaviourTypes, "Boid Movement Types", EditorStyles.foldout);
             if (showBoidBehaviourTypes)
             {
-                ShowBoidBehaviours(property.FindPropertyRelative("boidBehaviorTypes"));
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("boidMovementCollection"));
             }
 
         }
@@ -81,21 +72,22 @@ namespace VonderBoid
             }
         }
 
-        private void ShowButtons(SerializedProperty list) {
+        private void ShowButtons(SerializedProperty list)
+        {
             Debug.Log(list.arraySize);
 
-            selectedType = (BoidBehaviorTypes)EditorGUILayout.EnumPopup("Behaviour to create:", selectedType);
-            if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
-            {
-                list.InsertArrayElementAtIndex(list.arraySize);
+            //selectedType = (BoidBehaviorTypes)EditorGUILayout.EnumPopup("Behaviour to create:", selectedType);
+            //if (GUILayout.Button(moveButtonContent, EditorStyles.miniButtonLeft))
+            //{
+            //    list.InsertArrayElementAtIndex(list.arraySize);
 
-                SerializedProperty newProperty = list.GetEndProperty();
-                newProperty.objectReferenceValue = ScriptableObject.CreateInstance("VonderBoid.BoidBehaviorType"); 
-            }
-            if (GUILayout.Button(clearButtonContent, EditorStyles.miniButtonLeft))
-            {
-                list.ClearArray();
-            }
+            //    SerializedProperty newProperty = list.GetEndProperty();
+
+            //}
+            //if (GUILayout.Button(clearButtonContent, EditorStyles.miniButtonLeft))
+            //{
+            //    list.ClearArray();
+            //}
 
         }
     }

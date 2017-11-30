@@ -1181,12 +1181,12 @@ Prefab:
     - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
         type: 2}
       propertyPath: availableBoidBehaviours.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
         type: 2}
       propertyPath: availableBoidBehaviours.Array.data[0].boidBehaviorTypes.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
         type: 2}
@@ -1387,7 +1387,7 @@ Prefab:
     - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
         type: 2}
       propertyPath: flockSize
-      value: 125
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
         type: 2}
@@ -1405,7 +1405,14 @@ Prefab:
       propertyPath: rightChannel
       value: 
       objectReference: {fileID: 1885833159}
-    m_RemovedComponents: []
+    - target: {fileID: 114767822679229458, guid: 346c7b18abe849043a3f0e1b6b681dd5,
+        type: 2}
+      propertyPath: boidBehaviourCollection
+      value: 
+      objectReference: {fileID: 11400000, guid: a53104b0cb6dfc2459279db19a27d56e,
+        type: 2}
+    m_RemovedComponents:
+    - {fileID: 114812298975995322, guid: 346c7b18abe849043a3f0e1b6b681dd5, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 346c7b18abe849043a3f0e1b6b681dd5, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1885833159 stripped

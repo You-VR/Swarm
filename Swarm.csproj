@@ -86,10 +86,12 @@
   <ItemGroup>
     <Compile Include="Assets\Flocking\Scripts\BoidAppearance.cs" />
     <Compile Include="Assets\Flocking\Scripts\BoidBehaviorManager.cs" />
-    <Compile Include="Assets\Flocking\Scripts\BoidBehaviorType.cs" />
     <Compile Include="Assets\Flocking\Scripts\BoidBehaviour.cs" />
+    <Compile Include="Assets\Flocking\Scripts\BoidBehaviourCollection.cs" />
     <Compile Include="Assets\Flocking\Scripts\BoidController.cs" />
     <Compile Include="Assets\Flocking\Scripts\BoidFlocking.cs" />
+    <Compile Include="Assets\Flocking\Scripts\BoidMovementCollection.cs" />
+    <Compile Include="Assets\Flocking\Scripts\BoidMovementType.cs" />
     <Compile Include="Assets\Flocking\targetMovement.cs" />
   </ItemGroup>
   <ItemGroup>
