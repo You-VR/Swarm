@@ -44,17 +44,16 @@ namespace VonderBoid
             SerializedObject propObj = new SerializedObject(property.objectReferenceValue);
             EditorGUILayout.PropertyField(propObj.FindProperty("behaviourName"));
 
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("behaviourName"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("minVelocity"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("maxVelocity"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("randomness"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("maxRandomRotation"));
+            EditorGUILayout.PropertyField(propObj.FindProperty("minVelocity"));
+            EditorGUILayout.PropertyField(propObj.FindProperty("maxVelocity"));
+            EditorGUILayout.PropertyField(propObj.FindProperty("randomness"));
+            EditorGUILayout.PropertyField(propObj.FindProperty("maxRandomRotation"));
 
             // Audio Settings
             showBoidBehaviourTypes = EditorGUILayout.Foldout(showBoidBehaviourTypes, "Boid Movement Types", EditorStyles.foldout);
             if (showBoidBehaviourTypes)
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("boidMovementCollection"));
+                EditorGUILayout.PropertyField(propObj.FindProperty("boidMovementCollection"));
             }
 
         }

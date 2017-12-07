@@ -5,8 +5,6 @@ using UnityEditor;
 
 namespace VonderBoid
 {
-
-
     public class BoidController : MonoBehaviour
     {
         //*************************************************************************************************************************//
