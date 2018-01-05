@@ -12,16 +12,9 @@ MonoBehaviour:
   m_Name: BoidBehaviours
   m_EditorClassIdentifier: 
   boidBehaviorList:
-  - {fileID: 114095257309977600}
-  - {fileID: 114789620948798678}
-  - {fileID: 114536895088158726}
-  - {fileID: 114788525409434610}
-  - {fileID: 114143851851431518}
-  - {fileID: 114217581181919394}
-  - {fileID: 114212122931658276}
-  - {fileID: 114966695862058558}
-  testInt: 0
---- !u!114 &114095257309977600
+  - {fileID: 114244407657943846}
+  - {fileID: 114435405964130816}
+--- !u!114 &114244407657943846
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -39,7 +32,8 @@ MonoBehaviour:
   maxRandomRotation: {x: 30, y: 40, z: 10}
   scale: 1
   intensity: 1
---- !u!114 &114143851851431518
+  boidMovementCollection: {fileID: 0}
+--- !u!114 &114435405964130816
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -57,111 +51,4 @@ MonoBehaviour:
   maxRandomRotation: {x: 30, y: 40, z: 10}
   scale: 1
   intensity: 1
---- !u!114 &114212122931658276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
---- !u!114 &114217581181919394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
---- !u!114 &114536895088158726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
---- !u!114 &114788525409434610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
---- !u!114 &114789620948798678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
---- !u!114 &114966695862058558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103d6f36155cd6d498b70d169bdde9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourName: 
-  minVelocity: 0.2
-  maxVelocity: 3
-  randomness: 2
-  maxRandomRotation: {x: 30, y: 40, z: 10}
-  scale: 1
-  intensity: 1
+  boidMovementCollection: {fileID: 0}

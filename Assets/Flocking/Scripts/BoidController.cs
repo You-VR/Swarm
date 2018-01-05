@@ -60,6 +60,7 @@ namespace VonderBoid
         void Awake()
         {
             boids = new List<GameObject>();
+            boidBehaviourCollection = ScriptableObject.CreateInstance<BoidBehaviourCollection>();
         }
 
         void Start()
@@ -79,8 +80,6 @@ namespace VonderBoid
             leftChannel.transform.position = flockCenter + flockSTD;
             rightChannel.transform.position = flockCenter - flockSTD;
 
-
-            Debug.Log("!" + boidBehaviours.Count.ToString());
         }
 
         private void InstantiateFlock()

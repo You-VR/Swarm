@@ -7,21 +7,49 @@ using UnityEditor;
 
 namespace VonderBoid
 {
-    public class BoidMovementType
+    
+    public class BoidMovementType : ScriptableObject
     {
-        public string behaviourName { get; protected set; }
+        public enum BoidBehaviorTypes
+        {
+            Cohesion,
+            Alignment,
+            Orbit,
+            Repulsion,
+            Attraction
+        }
 
-        public float intensity { get; set; }
+        public virtual string behaviourName { get { return "Default"; } }
+        public float intensity;
 
         public void OnGUI() {
             EditorGUILayout.LabelField(behaviourName);
             intensity = EditorGUILayout.Slider("intensity", intensity, 0, 10); 
         }
 
-    public virtual Vector3 getTargetVector(BoidFlocking boid) {
+        public virtual Vector3 getTargetVector(BoidFlocking boid) {
             return Vector3.zero;
         }
 
+        public static BoidMovementType CreateMovementType(BoidBehaviorTypes boidBehaviourType)
+        {
+            switch (boidBehaviourType)
+            {
+                case BoidBehaviorTypes.Cohesion:
+                    return new BoidMovementTypeCohesion();
+                case BoidBehaviorTypes.Alignment:
+                    return new BoidMovementTypeAlignment();
+                case BoidBehaviorTypes.Orbit:
+                    return new BoidMovementTypeOrbit();
+                case BoidBehaviorTypes.Repulsion:
+                    return new BoidMovementTypeRepulsion();
+                case BoidBehaviorTypes.Attraction:
+                    return new BoidMovementTypeAttraction();
+                default:
+                    return new BoidMovementType();
+
+            }
+        }
 
         //********************************************//
         //       MATHS FUNCTIONS                      //
@@ -43,43 +71,62 @@ namespace VonderBoid
             return x.normalized * tickFunction(x.magnitude, range);
         }
     }
+    [CustomPropertyDrawer(typeof(BoidMovementType))]
+    public class BoidMovementTypeEditor : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            SerializedObject propObj = new SerializedObject(property.objectReferenceValue);
+            propObj.Update();
+            EditorGUILayout.LabelField(((BoidMovementType)propObj.targetObject).behaviourName);
+            EditorGUILayout.Slider(propObj.FindProperty("intensity"), 0.0f, 5.0f);
+            propObj.ApplyModifiedProperties();
+        }
+    }
 
+    
     public class BoidMovementTypeCohesion : BoidMovementType
     {
         public float cohesionRange = 2.0f;
-
-        public BoidMovementTypeCohesion()
-        {
-            behaviourName = "Cohesion";
-        }
+        public override string behaviourName { get { return "Cohesion"; } }
 
         public override Vector3 getTargetVector(BoidFlocking boid)
         {
             return tickFunction((boid.flockCenter - boid.transform.position), cohesionRange);
         }
     }
+    [CustomPropertyDrawer(typeof(BoidMovementTypeCohesion))]
+    public class BoidMovementTypeCohesionEditor : BoidMovementTypeEditor
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(position, property, label);
+        }
+    }
+
 
     public class BoidMovementTypeAlignment : BoidMovementType
-    {     
-        public BoidMovementTypeAlignment()
-        {
-            behaviourName = "Alignment";
-        }
+    {
+        public override string behaviourName { get { return "Alignment"; } }
 
         public override Vector3 getTargetVector(BoidFlocking boid)
         {
             return (boid.flockVelocity - boid.velocity) * Time.deltaTime;
         }
     }
+    [CustomPropertyDrawer(typeof(BoidMovementTypeAlignment))]
+    public class BoidMovementTypeAlignmentEditor : BoidMovementTypeEditor
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(position, property, label);
+        }
+    }
 
     public class BoidMovementTypeOrbit : BoidMovementType
     {
         public List<GameObject> targets;
-
-        public BoidMovementTypeOrbit()
-        {
-            behaviourName = "Orbit";
-        }
+        public override string behaviourName { get { return "Orbit"; } }
 
         public override Vector3 getTargetVector(BoidFlocking boid)
         {
@@ -95,16 +142,21 @@ namespace VonderBoid
             }
         }
     }
+    [CustomPropertyDrawer(typeof(BoidMovementTypeOrbit))]
+    public class BoidMovementTypeOrbitEditor : BoidMovementTypeEditor
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(position, property, label);
+        }
+    }
 
     public class BoidMovementTypeRepulsion : BoidMovementType
     {
         public List<GameObject> targets;
         float interactionRange = 2.0f;
 
-        public BoidMovementTypeRepulsion()
-        {
-            behaviourName = "Repulsion";
-        }
+        public override string behaviourName { get { return "Repulsion"; } }
 
         public override Vector3 getTargetVector(BoidFlocking boid)
         {
@@ -123,17 +175,21 @@ namespace VonderBoid
             }
         }
     }
+    [CustomPropertyDrawer(typeof(BoidMovementTypeRepulsion))]
+    public class BoidMovementTypeRepulsionEditor : BoidMovementTypeEditor
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(position, property, label);
+        }
+    }
 
     public class BoidMovementTypeAttraction : BoidMovementType
     {
         public List<GameObject> targets;
         float interactionRange = 2.0f;
 
-        public BoidMovementTypeAttraction()
-        {
-            behaviourName = "Attraction";
-        }
-
+        public override string behaviourName { get { return "Attraction"; } }
         public override Vector3 getTargetVector(BoidFlocking boid)
         {
             Vector3 attractionVector = Vector3.zero;
@@ -151,15 +207,12 @@ namespace VonderBoid
             }
         }
     }
-
-
-    //[CustomPropertyDrawer(typeof(BoidMovementType))]
-    //public class BoidBehaviourTypeDrawer : PropertyDrawer
-    //{
-    //    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    //    {
-    //        Debug.Log("Here");
-    //        EditorGUILayout.PropertyField(property, true);
-    //    }
-    //}
+    [CustomPropertyDrawer(typeof(BoidMovementTypeAttraction))]
+    public class BoidMovementTypeAttractionEditor : BoidMovementTypeEditor
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(position, property, label);
+        }
+    }
 }

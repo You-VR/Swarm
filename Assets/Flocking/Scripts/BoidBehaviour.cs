@@ -26,8 +26,12 @@ namespace VonderBoid
         public float scale = 1.0f;
         public float intensity = 1.0f;
 
-        public List<BoidMovementType> boidMovementTypes;
+        public BoidMovementCollection boidMovementCollection;
 
+        private void OnEnable()
+        {
+            boidMovementCollection = ScriptableObject.CreateInstance<BoidMovementCollection>();
+        }
     }
 
     [CustomPropertyDrawer(typeof(BoidBehaviour))]
@@ -39,8 +43,11 @@ namespace VonderBoid
             moveButtonContent = new GUIContent("\u21b4", "Add"),
             clearButtonContent = new GUIContent("x", "Clear");
 
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            EditorGUI.BeginProperty(position, label, property);
+
             SerializedObject propObj = new SerializedObject(property.objectReferenceValue);
             EditorGUILayout.PropertyField(propObj.FindProperty("behaviourName"));
 
@@ -55,6 +62,8 @@ namespace VonderBoid
             {
                 EditorGUILayout.PropertyField(propObj.FindProperty("boidMovementCollection"));
             }
+
+            EditorGUI.EndProperty();
 
         }
 

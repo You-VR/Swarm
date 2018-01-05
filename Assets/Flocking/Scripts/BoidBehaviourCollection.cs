@@ -9,7 +9,5 @@ namespace VonderBoid
     {
         [SerializeField]
         public List<BoidBehaviour> boidBehaviorList;
-
-        public int testInt;
     }
 }
