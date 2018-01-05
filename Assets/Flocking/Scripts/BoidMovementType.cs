@@ -22,11 +22,6 @@ namespace VonderBoid
         public virtual string behaviourName { get { return "Default"; } }
         public float intensity;
 
-        public void OnGUI() {
-            EditorGUILayout.LabelField(behaviourName);
-            intensity = EditorGUILayout.Slider("intensity", intensity, 0, 10); 
-        }
-
         public virtual Vector3 getTargetVector(BoidFlocking boid) {
             return Vector3.zero;
         }
